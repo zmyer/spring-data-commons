@@ -15,12 +15,15 @@
  */
 package org.springframework.data.repository.config;
 
+import java.lang.reflect.Method;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.support.AbstractBeanDefinition;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.support.BeanDefinitionRegistry;
-import org.springframework.beans.factory.support.LookupOverride;
+import org.springframework.beans.factory.support.CglibSubclassingInstantiationStrategy;
+import org.springframework.beans.factory.support.MethodOverride;
 import org.springframework.beans.factory.support.MethodOverrides;
 import org.springframework.beans.factory.support.RootBeanDefinition;
 import org.springframework.core.env.Environment;
@@ -146,7 +149,7 @@ class RepositoryBeanDefinitionBuilder {
 		if (beanDefinition.isAbstract()) {
 
 			MethodOverrides overrides = new MethodOverrides();
-			overrides.addOverride(new LookupOverride("finalize", "name"));
+			overrides.addOverride(new NoOpMethodOverride());
 			beanDefinition.setMethodOverrides(overrides);
 			beanDefinition.setAbstract(false);
 
@@ -158,5 +161,27 @@ class RepositoryBeanDefinitionBuilder {
 		registry.registerBeanDefinition(beanName, beanDefinition);
 
 		return beanName;
+	}
+
+	/**
+	 * A {@link MethodOverride} that never applies. Used to trick the container into using the
+	 * {@link CglibSubclassingInstantiationStrategy} for abstract custom implementation classes.
+	 *
+	 * @author Oliver Gierke
+	 */
+	private static class NoOpMethodOverride extends MethodOverride {
+
+		public NoOpMethodOverride() {
+			super("finalize");
+		}
+
+		/* 
+		 * (non-Javadoc)
+		 * @see org.springframework.beans.factory.support.MethodOverride#matches(java.lang.reflect.Method)
+		 */
+		@Override
+		public boolean matches(Method method) {
+			return false;
+		}
 	}
 }
