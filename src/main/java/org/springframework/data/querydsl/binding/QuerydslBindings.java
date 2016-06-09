@@ -100,6 +100,7 @@ public class QuerydslBindings {
 	 * @param paths must not be {@literal null} or empty.
 	 * @return
 	 */
+	@SafeVarargs
 	public final <T extends Path<S>, S> PathBinder<T, S> bind(T... paths) {
 		return new PathBinder<T, S>(paths);
 	}
@@ -317,6 +318,7 @@ public class QuerydslBindings {
 		 * 
 		 * @param paths must not be {@literal null} or empty.
 		 */
+		@SafeVarargs
 		PathBinder(P... paths) {
 
 			Assert.notEmpty(paths, "At least one path has to be provided!");
@@ -382,7 +384,6 @@ public class QuerydslBindings {
 		 * @param alias can be {@literal null}.
 		 * @param path must not be {@literal null}.
 		 */
-		@SuppressWarnings("unchecked")
 		private AliasingPathBinder(String alias, P path) {
 
 			super(path);
