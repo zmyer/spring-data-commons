@@ -15,8 +15,7 @@
  */
 package org.springframework.data.util;
 
-import static org.hamcrest.Matchers.*;
-import static org.junit.Assert.*;
+import static org.assertj.core.api.Assertions.*;
 import static org.mockito.Mockito.*;
 import static org.springframework.data.util.ClassTypeInformation.*;
 
@@ -60,9 +59,10 @@ public class ParameterizedTypeUnitTests {
 		TypeDiscoverer<Object> objectParent = new TypeDiscoverer<Object>(Object.class, EMPTY_MAP);
 
 		ParameterizedTypeInformation<Object> first = new ParameterizedTypeInformation<Object>(one, stringParent, EMPTY_MAP);
-		ParameterizedTypeInformation<Object> second = new ParameterizedTypeInformation<Object>(one, objectParent, EMPTY_MAP);
+		ParameterizedTypeInformation<Object> second = new ParameterizedTypeInformation<Object>(one, objectParent,
+				EMPTY_MAP);
 
-		assertThat(first, is(not(second)));
+		assertThat(first).isNotEqualTo(second);
 	}
 
 	@Test
@@ -71,9 +71,10 @@ public class ParameterizedTypeUnitTests {
 		TypeDiscoverer<String> stringParent = new TypeDiscoverer<String>(String.class, EMPTY_MAP);
 
 		ParameterizedTypeInformation<Object> first = new ParameterizedTypeInformation<Object>(one, stringParent, EMPTY_MAP);
-		ParameterizedTypeInformation<Object> second = new ParameterizedTypeInformation<Object>(one, stringParent, EMPTY_MAP);
+		ParameterizedTypeInformation<Object> second = new ParameterizedTypeInformation<Object>(one, stringParent,
+				EMPTY_MAP);
 
-		assertTrue(first.equals(second));
+		assertThat(first.equals(second)).isTrue();
 	}
 
 	/**
@@ -84,12 +85,12 @@ public class ParameterizedTypeUnitTests {
 
 		TypeInformation<Foo> type = ClassTypeInformation.from(Foo.class);
 		TypeInformation<?> propertyType = type.getProperty("param");
-		assertThat(propertyType.getProperty("value").getType(), is(typeCompatibleWith(String.class)));
-		assertThat(propertyType.getMapValueType().getType(), is(typeCompatibleWith(String.class)));
+		assertThat(propertyType.getProperty("value").getType()).isEqualTo(String.class);
+		assertThat(propertyType.getMapValueType().getType()).isEqualTo(String.class);
 
 		propertyType = type.getProperty("param2");
-		assertThat(propertyType.getProperty("value").getType(), is(typeCompatibleWith(String.class)));
-		assertThat(propertyType.getMapValueType().getType(), is(typeCompatibleWith(Locale.class)));
+		assertThat(propertyType.getProperty("value").getType()).isEqualTo(String.class);
+		assertThat(propertyType.getMapValueType().getType()).isEqualTo(Locale.class);
 	}
 
 	/**
@@ -98,8 +99,8 @@ public class ParameterizedTypeUnitTests {
 	@Test
 	public void createsToStringRepresentation() {
 
-		assertThat(from(Foo.class).getProperty("param").toString(),
-				is("org.springframework.data.util.ParameterizedTypeUnitTests$Localized<java.lang.String>"));
+		assertThat(from(Foo.class).getProperty("param").toString())
+				.isEqualTo("org.springframework.data.util.ParameterizedTypeUnitTests$Localized<java.lang.String>");
 	}
 
 	/**
@@ -112,8 +113,8 @@ public class ParameterizedTypeUnitTests {
 		TypeInformation first = from(First.class).getProperty("property");
 		TypeInformation second = from(Second.class).getProperty("property");
 
-		assertThat(first, is(second));
-		assertThat(first.hashCode(), is(second.hashCode()));
+		assertThat(first).isEqualTo(second);
+		assertThat(first.hashCode()).isEqualTo(second.hashCode());
 	}
 
 	/**
@@ -124,7 +125,7 @@ public class ParameterizedTypeUnitTests {
 	public void getActualTypeShouldNotUnwrapParameterizedTypes() {
 
 		TypeInformation type = from(First.class).getProperty("property");
-		assertThat(type.getActualType(), is(type));
+		assertThat(type.getActualType()).isEqualTo(type);
 	}
 
 	/**
@@ -135,7 +136,7 @@ public class ParameterizedTypeUnitTests {
 
 		TypeInformation<NormalizedProfile> information = ClassTypeInformation.from(NormalizedProfile.class);
 		TypeInformation<?> valueType = information.getProperty("education2.data").getComponentType();
-		assertThat(valueType.getProperty("value").getType(), is(typeCompatibleWith(Education.class)));
+		assertThat(valueType.getProperty("value").getType()).isEqualTo(Education.class);
 	}
 
 	/**

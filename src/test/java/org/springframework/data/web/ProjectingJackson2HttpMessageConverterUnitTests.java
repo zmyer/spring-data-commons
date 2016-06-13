@@ -38,7 +38,7 @@ public class ProjectingJackson2HttpMessageConverterUnitTests {
 	 */
 	@Test
 	public void canReadJsonIntoAnnotatedInterface() {
-		assertThat(converter.canRead(SampleInterface.class, ANYTHING_JSON), is(true));
+		assertThat(converter.canRead(SampleInterface.class, ANYTHING_JSON)).isTrue();
 	}
 
 	/**
@@ -46,7 +46,7 @@ public class ProjectingJackson2HttpMessageConverterUnitTests {
 	 */
 	@Test
 	public void cannotReadUnannotatedInterface() {
-		assertThat(converter.canRead(UnannotatedInterface.class, ANYTHING_JSON), is(false));
+		assertThat(converter.canRead(UnannotatedInterface.class, ANYTHING_JSON)).isFalse();
 	}
 
 	/**
@@ -54,7 +54,7 @@ public class ProjectingJackson2HttpMessageConverterUnitTests {
 	 */
 	@Test
 	public void cannotReadClass() {
-		assertThat(converter.canRead(SampleClass.class, ANYTHING_JSON), is(false));
+		assertThat(converter.canRead(SampleClass.class, ANYTHING_JSON)).isFalse();
 	}
 
 	@ProjectedPayload

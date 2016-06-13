@@ -66,7 +66,7 @@ public class StreamQueryResultHandlerUnitTests {
 
 		Object result = this.handler.handle(people);
 
-		assertThat(result, is(instanceOf(Stream.class)));
+		assertThat(result).isEqualTo(instanceOf(Stream.class));
 
 		Stream<Object> stream = (Stream<Object>) result;
 
@@ -75,12 +75,12 @@ public class StreamQueryResultHandlerUnitTests {
 			@Override
 			public boolean test(Object t) {
 
-				assertThat(t, is(instanceOf(String.class)));
+				assertThat(t).isEqualTo(instanceOf(String.class));
 
 				String string = (String) t;
 
-				assertThat(string, containsString("Dave"));
-				assertThat(string, containsString("Matthews"));
+				assertThat(string).contains("Dave");
+				assertThat(string).contains("Matthews");
 
 				return true;
 			}
