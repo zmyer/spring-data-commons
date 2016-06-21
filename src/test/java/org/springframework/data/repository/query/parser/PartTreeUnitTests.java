@@ -73,14 +73,14 @@ public class PartTreeUnitTests {
 	public void parsesAndPropertiesCorrectly() throws Exception {
 		PartTree partTree = partTree("firstnameAndLastname");
 		assertPart(partTree, parts("firstname", "lastname"));
-		assertThat(partTree.getSort()).isNull();
+		assertThat(partTree.getSort()).isNotPresent();
 	}
 
 	@Test
 	public void parsesOrPropertiesCorrectly() throws Exception {
 		PartTree partTree = partTree("firstnameOrLastname");
 		assertPart(partTree, parts("firstname"), parts("lastname"));
-		assertThat(partTree.getSort()).isNull();
+		assertThat(partTree.getSort()).isNotPresent();
 	}
 
 	@Test
@@ -91,8 +91,7 @@ public class PartTreeUnitTests {
 
 	@Test
 	public void hasSortIfOrderByIsGiven() throws Exception {
-		PartTree partTree = partTree("firstnameOrderByLastnameDesc");
-		assertThat(partTree.getSort()).isEqualTo(new Sort(Direction.DESC, "lastname"));
+		assertThat(partTree("firstnameOrderByLastnameDesc").getSort()).hasValue(new Sort(Direction.DESC, "lastname"));
 	}
 
 	@Test
@@ -104,7 +103,7 @@ public class PartTreeUnitTests {
 
 	private void hasSortIfOrderByIsGivenWithAllIgnoreCase(String source) throws Exception {
 		PartTree partTree = partTree(source);
-		assertThat(partTree.getSort()).isEqualTo(new Sort(Direction.DESC, "lastname"));
+		assertThat(partTree.getSort()).hasValue(new Sort(Direction.DESC, "lastname"));
 	}
 
 	@Test
@@ -118,7 +117,7 @@ public class PartTreeUnitTests {
 			// Check it's non-greedy (would strip everything until Order*By*
 			// otherwise)
 			PartTree tree = detectsDistinctCorrectly(prefix + "ByLastnameOrderByFirstnameDesc", false);
-			assertThat(tree.getSort()).isEqualTo(new Sort(Direction.DESC, "firstname"));
+			assertThat(tree.getSort()).hasValue(new Sort(Direction.DESC, "firstname"));
 		}
 	}
 
@@ -333,10 +332,14 @@ public class PartTreeUnitTests {
 	 */
 	@Test
 	public void parsesSpecialCharactersCorrectly() {
+
 		PartTree tree = new PartTree("findByØreAndÅrOrderByÅrAsc", DomainObjectWithSpecialChars.class);
+
 		assertPart(tree, new Part[] { new Part("øre", DomainObjectWithSpecialChars.class),
 				new Part("år", DomainObjectWithSpecialChars.class) });
-		assertThat(tree.getSort().getOrderFor("år").isAscending()).isTrue();
+		assertThat(tree.getSort()).hasValueSatisfying(it -> {
+			assertThat(it.getOrderFor("år").isAscending()).isTrue();
+		});
 	}
 
 	/**
@@ -349,7 +352,9 @@ public class PartTreeUnitTests {
 
 		assertPart(tree, new Part[] { new Part("이름", DomainObjectWithSpecialChars.class),
 				new Part("생일", DomainObjectWithSpecialChars.class) });
-		assertThat(tree.getSort().getOrderFor("생일").isAscending()).isTrue();
+		assertThat(tree.getSort()).hasValueSatisfying(it -> {
+			assertThat(it.getOrderFor("생일").isAscending()).isTrue();
+		});
 	}
 
 	/**
@@ -362,7 +367,9 @@ public class PartTreeUnitTests {
 
 		assertPart(tree, new Part[] { new Part("이름", DomainObjectWithSpecialChars.class),
 				new Part("order.id", DomainObjectWithSpecialChars.class) });
-		assertThat(tree.getSort().getOrderFor("생일").isAscending()).isTrue();
+		assertThat(tree.getSort()).hasValueSatisfying(it -> {
+			assertThat(it.getOrderFor("생일").isAscending()).isTrue();
+		});
 	}
 
 	/**
@@ -390,7 +397,9 @@ public class PartTreeUnitTests {
 				new Part("nested.order.id", DomainObjectWithSpecialChars.class) //
 		});
 
-		assertThat(tree.getSort().getOrderFor("생일").isAscending()).isTrue();
+		assertThat(tree.getSort()).hasValueSatisfying(it -> {
+			assertThat(it.getOrderFor("생일").isAscending()).isTrue();
+		});
 	}
 
 	/**
@@ -429,7 +438,9 @@ public class PartTreeUnitTests {
 						new Part("property1", DomainObjectWithSpecialChars.class) //
 		});
 
-		assertThat(tree.getSort().getOrderFor("생일").isAscending()).isTrue();
+		assertThat(tree.getSort()).hasValueSatisfying(it -> {
+			assertThat(it.getOrderFor("생일").isAscending()).isTrue();
+		});
 	}
 
 	/**
@@ -526,7 +537,7 @@ public class PartTreeUnitTests {
 		PartTree tree = new PartTree("findAllByOrderByLastnameAsc", User.class);
 
 		assertThat(tree.getParts()).isEmpty();
-		assertThat(tree.getSort()).isEqualTo(new Sort(Direction.ASC, "lastname"));
+		assertThat(tree.getSort()).hasValue(new Sort(Direction.ASC, "lastname"));
 	}
 
 	/**
