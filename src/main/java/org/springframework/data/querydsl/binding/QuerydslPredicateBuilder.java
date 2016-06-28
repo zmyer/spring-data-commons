@@ -163,20 +163,25 @@ public class QuerydslPredicateBuilder {
 	 */
 	private Path<?> reifyPath(PropertyPath path, Optional<Path<?>> base) {
 
-		if (base instanceof CollectionPathBase) {
-			return reifyPath(path, (Path<?>) ((CollectionPathBase<?, ?, ?>) base).any());
-		}
+		Optional<Path<?>> map = base.filter(it -> it instanceof CollectionPathBase)
+				.map(it -> CollectionPathBase.class.cast(it))//
+				.map(CollectionPathBase::any)//
+				.map(it -> Path.class.cast(it))//
+				.map(it -> reifyPath(path, Optional.of(it)));
 
-		Path<?> entityPath = base.orElseGet(() -> resolver.createPath(path.getOwningType().getType()));
+		return map.orElseGet(() -> {
 
-		Field field = ReflectionUtils.findField(entityPath.getClass(), path.getSegment());
-		Object value = ReflectionUtils.getField(field, entityPath);
+			Path<?> entityPath = base.orElseGet(() -> resolver.createPath(path.getOwningType().getType()));
 
-		if (path.hasNext()) {
-			return reifyPath(path.next(), Optional.of((Path<?>) value));
-		}
+			Field field = ReflectionUtils.findField(entityPath.getClass(), path.getSegment());
+			Object value = ReflectionUtils.getField(field, entityPath);
 
-		return (Path<?>) value;
+			if (path.hasNext()) {
+				return reifyPath(path.next(), Optional.of((Path<?>) value));
+			}
+
+			return (Path<?>) value;
+		});
 	}
 
 	/**

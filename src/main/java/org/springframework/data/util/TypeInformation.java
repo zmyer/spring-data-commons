@@ -149,5 +149,5 @@ public interface TypeInformation<S> {
 	 * @param type must not be {@literal null}.
 	 * @return will never be {@literal null}.
 	 */
-	TypeInformation<?> specialize(ClassTypeInformation<?> type);
+	TypeInformation<? extends S> specialize(ClassTypeInformation<?> type);
 }

@@ -177,8 +177,8 @@ public class ClassTypeInformation<S> extends TypeDiscoverer<S> {
 	 * @see org.springframework.data.util.TypeDiscoverer#specialize(org.springframework.data.util.ClassTypeInformation)
 	 */
 	@Override
-	public TypeInformation<?> specialize(ClassTypeInformation<?> type) {
-		return type;
+	public TypeInformation<? extends S> specialize(ClassTypeInformation<?> type) {
+		return (TypeInformation<? extends S>) type;
 	}
 
 	/* 

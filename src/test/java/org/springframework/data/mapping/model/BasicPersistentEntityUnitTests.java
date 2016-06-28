@@ -37,6 +37,7 @@ import org.springframework.data.annotation.CreatedBy;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedBy;
 import org.springframework.data.annotation.TypeAlias;
+import org.springframework.data.mapping.Alias;
 import org.springframework.data.mapping.PersistentEntity;
 import org.springframework.data.mapping.PersistentEntitySpec;
 import org.springframework.data.mapping.PersistentProperty;
@@ -79,7 +80,7 @@ public class BasicPersistentEntityUnitTests<T extends PersistentProperty<T>> {
 	public void returnsNullForTypeAliasIfNoneConfigured() {
 
 		PersistentEntity<Entity, T> entity = createEntity(Entity.class);
-		assertThat(entity.getTypeAlias()).isNotPresent();
+		assertThat(entity.getTypeAlias()).isEqualTo(Alias.NONE);
 	}
 
 	@Test
@@ -117,9 +118,10 @@ public class BasicPersistentEntityUnitTests<T extends PersistentProperty<T>> {
 
 		assertThat(properties).hasSize(3);
 		Iterator<T> iterator = properties.iterator();
-		assertThat(iterator.next()).isEqualTo(entity.getPersistentProperty("firstName"));
-		assertThat(iterator.next()).isEqualTo(entity.getPersistentProperty("lastName"));
-		assertThat(iterator.next()).isEqualTo(entity.getPersistentProperty("ssn"));
+
+		assertThat(entity.getPersistentProperty("firstName")).hasValue(iterator.next());
+		assertThat(entity.getPersistentProperty("lastName")).hasValue(iterator.next());
+		assertThat(entity.getPersistentProperty("ssn")).hasValue(iterator.next());
 	}
 
 	/**

@@ -124,7 +124,7 @@ public class PageableExecutionUtilsUnitTests {
 	public void subsequentPageRequestWithoutResultRequiresRequireTotal() {
 
 		doReturn(7L).when(totalSupplierMock).get();
-		Page<Integer> page = PageableExecutionUtils.getPage(Collections.<Integer>emptyList(), new PageRequest(5, 10),
+		Page<Integer> page = PageableExecutionUtils.getPage(Collections.<Integer>emptyList(), PageRequest.of(5, 10),
 				totalSupplierMock);
 
 		assertThat(page.getTotalElements()).isEqualTo(7L);

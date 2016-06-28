@@ -504,13 +504,15 @@ class TypeDiscoverer<S> implements TypeInformation<S> {
 	 * @see org.springframework.data.util.TypeInformation#specialize(org.springframework.data.util.ClassTypeInformation)
 	 */
 	@Override
-	public TypeInformation<?> specialize(ClassTypeInformation<?> type) {
+	@SuppressWarnings("unchecked")
+	public TypeInformation<? extends S> specialize(ClassTypeInformation<?> type) {
 
 		Assert.isTrue(getType().isAssignableFrom(type.getType()));
 
 		List<TypeInformation<?>> arguments = getTypeArguments();
 
-		return arguments.isEmpty() ? type : createInfo(new SyntheticParamterizedType(type, arguments));
+		return (TypeInformation<? extends S>) (arguments.isEmpty() ? type
+				: createInfo(new SyntheticParamterizedType(type, arguments)));
 	}
 
 	private TypeInformation<?> getTypeArgument(Class<?> bound, int index) {

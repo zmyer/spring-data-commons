@@ -20,6 +20,7 @@ import lombok.experimental.UtilityClass;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.Optional;
+import java.util.function.Function;
 import java.util.stream.Stream;
 
 import org.springframework.util.Assert;
@@ -59,7 +60,53 @@ public class Optionals {
 		return Arrays.asList(optionals).stream().flatMap(it -> it.map(Stream::of).orElse(Stream.empty()));
 	}
 
+	/**
+	 * Applies the given function to the elements of the source and returns the first non-empty result.
+	 * 
+	 * @param source must not be {@literal null}.
+	 * @param function must not be {@literal null}.
+	 * @return
+	 */
+	public static <S, T> Optional<T> firstNonEmpty(Iterable<S> source, Function<S, Optional<T>> function) {
+
+		Assert.notNull(source, "Source must not be null!");
+		Assert.notNull(function, "Function must not be null!");
+
+		return Streamable.of(source).stream()//
+				.map(it -> function.apply(it))//
+				.filter(it -> it.isPresent())//
+				.findFirst().orElse(Optional.empty());
+	}
+
+	/**
+	 * Applies the given function to the elements of the source and returns the first non-empty result.
+	 * 
+	 * @param source must not be {@literal null}.
+	 * @param function must not be {@literal null}.
+	 * @return
+	 */
+	public static <S, T> T firstNonEmpty(Iterable<S> source, Function<S, T> function, T defaultValue) {
+
+		Assert.notNull(source, "Source must not be null!");
+		Assert.notNull(function, "Function must not be null!");
+
+		return Streamable.of(source).stream()//
+				.map(it -> function.apply(it))//
+				.filter(it -> !it.equals(defaultValue))//
+				.findFirst().orElse(defaultValue);
+	}
+
+	/**
+	 * Returns the next element of the given {@link Iterator} or {@link Optional#empty()} in case there is no next
+	 * element.
+	 * 
+	 * @param iterator must not be {@literal null}.
+	 * @return
+	 */
 	public static <T> Optional<T> next(Iterator<T> iterator) {
+
+		Assert.notNull(iterator, "Iterator must not be null!");
+
 		return iterator.hasNext() ? Optional.of(iterator.next()) : Optional.empty();
 	}
 }
