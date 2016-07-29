@@ -108,7 +108,7 @@ public class QuerydslBindingsUnitTests {
 	 * @see DATACMNS-669
 	 */
 	@Test
-	public void propertyNotExplicitlyIncludedAndWithoutTypeBindingIsInvisible() {
+	public void propertyNotExplicitlyIncludedAndWithoutTypeBindingIsNotAvailable() {
 
 		bindings.bind(String.class).first(CONTAINS_BINDING);
 
@@ -119,102 +119,102 @@ public class QuerydslBindingsUnitTests {
 	 * @see DATACMNS-669
 	 */
 	@Test
-	public void pathIsVisibleIfTypeBasedBindingWasRegistered() {
+	public void pathIsAvailableIfTypeBasedBindingWasRegistered() {
 
 		bindings.bind(String.class).first(CONTAINS_BINDING);
 
-		assertThat(bindings.isPathVisible("inceptionYear", User.class)).isTrue();
+		assertThat(bindings.isPathAvailable("inceptionYear", User.class)).isTrue();
 	}
 
 	/**
 	 * @see DATACMNS-669
 	 */
 	@Test
-	public void explicitlyIncludedPathIsVisible() {
+	public void explicitlyIncludedPathIsAvailable() {
 
 		bindings.including(QUser.user.inceptionYear);
 
-		assertThat(bindings.isPathVisible("inceptionYear", User.class)).isTrue();
+		assertThat(bindings.isPathAvailable("inceptionYear", User.class)).isTrue();
 	}
 
 	/**
 	 * @see DATACMNS-669
 	 */
 	@Test
-	public void notExplicitlyIncludedPathIsInvisible() {
+	public void notExplicitlyIncludedPathIsNotAvailable() {
 
 		bindings.including(QUser.user.inceptionYear);
 
-		assertThat(bindings.isPathVisible("firstname", User.class)).isFalse();
+		assertThat(bindings.isPathAvailable("firstname", User.class)).isFalse();
 	}
 
 	/**
 	 * @see DATACMNS-669
 	 */
 	@Test
-	public void excludedPathIsInvisible() {
+	public void excludedPathIsNotAvailable() {
 
 		bindings.excluding(QUser.user.inceptionYear);
 
-		assertThat(bindings.isPathVisible("inceptionYear", User.class)).isFalse();
+		assertThat(bindings.isPathAvailable("inceptionYear", User.class)).isFalse();
 	}
 
 	/**
 	 * @see DATACMNS-669
 	 */
 	@Test
-	public void pathIsVisibleIfNotExplicitlyExcluded() {
+	public void pathIsAvailableIfNotExplicitlyExcluded() {
 
 		bindings.excluding(QUser.user.inceptionYear);
 
-		assertThat(bindings.isPathVisible("firstname", User.class)).isTrue();
+		assertThat(bindings.isPathAvailable("firstname", User.class)).isTrue();
 	}
 
 	/**
 	 * @see DATACMNS-669
 	 */
 	@Test
-	public void pathIsVisibleIfItsBothBlackAndWhitelisted() {
+	public void pathIsAvailableIfItsBothBlackAndWhitelisted() {
 
 		bindings.excluding(QUser.user.firstname);
 		bindings.including(QUser.user.firstname);
 
-		assertThat(bindings.isPathVisible("firstname", User.class)).isTrue();
+		assertThat(bindings.isPathAvailable("firstname", User.class)).isTrue();
 	}
 
 	/**
 	 * @see DATACMNS-669
 	 */
 	@Test
-	public void nestedPathIsInvisibleIfAParanetPathWasExcluded() {
+	public void nestedPathIsNotAvailableIfAParanetPathWasExcluded() {
 
 		bindings.excluding(QUser.user.address);
 
-		assertThat(bindings.isPathVisible("address.city", User.class)).isFalse();
+		assertThat(bindings.isPathAvailable("address.city", User.class)).isFalse();
 	}
 
 	/**
 	 * @see DATACMNS-669
 	 */
 	@Test
-	public void pathIsVisibleIfConcretePathIsVisibleButParentExcluded() {
-
-		bindings.excluding(QUser.user.address);
-		bindings.including(QUser.user.address.city);
-
-		assertThat(bindings.isPathVisible("address.city", User.class)).isTrue();
-	}
-
-	/**
-	 * @see DATACMNS-669
-	 */
-	@Test
-	public void isPathVisibleShouldReturnFalseWhenPartialPathContainedInExcludingAndConcretePathToDifferentPropertyIsIncluded() {
+	public void pathIsAvailableIfConcretePathIsAvailableButParentExcluded() {
 
 		bindings.excluding(QUser.user.address);
 		bindings.including(QUser.user.address.city);
 
-		assertThat(bindings.isPathVisible("address.street", User.class)).isFalse();
+		assertThat(bindings.isPathAvailable("address.city", User.class)).isTrue();
+	}
+
+	/**
+	 * @see DATACMNS-669
+	 */
+	@Test
+	public void isPathAvailableShouldReturnFalseWhenPartialPathContainedInExcludingAndConcretePathToDifferentPropertyIsIncluded() {
+
+		bindings.excluding(QUser.user.address);
+		bindings.including(QUser.user.address.city);
+
+		assertThat(bindings.isPathAvailable("address.street", User.class)).isFalse();
 	}
 
 	/**
@@ -225,10 +225,10 @@ public class QuerydslBindingsUnitTests {
 
 		bindings.including(QUser.user.firstname, QUser.user.address.street);
 
-		assertThat(bindings.isPathVisible("firstname", User.class)).isTrue();
-		assertThat(bindings.isPathVisible("address.street", User.class)).isTrue();
-		assertThat(bindings.isPathVisible("lastname", User.class)).isFalse();
-		assertThat(bindings.isPathVisible("address.city", User.class)).isFalse();
+		assertThat(bindings.isPathAvailable("firstname", User.class)).isTrue();
+		assertThat(bindings.isPathAvailable("address.street", User.class)).isTrue();
+		assertThat(bindings.isPathAvailable("lastname", User.class)).isFalse();
+		assertThat(bindings.isPathAvailable("address.city", User.class)).isFalse();
 	}
 
 	/**
@@ -258,10 +258,10 @@ public class QuerydslBindingsUnitTests {
 		PropertyPath path = bindings.getPropertyPath("city", ClassTypeInformation.from(User.class));
 
 		assertThat(path).isNotNull();
-		assertThat(bindings.isPathVisible("city", User.class)).isTrue();
+		assertThat(bindings.isPathAvailable("city", User.class)).isTrue();
 
 		// Aliasing implicitly blacklists original path
-		assertThat(bindings.isPathVisible("address.city", User.class)).isFalse();
+		assertThat(bindings.isPathAvailable("address.city", User.class)).isFalse();
 	}
 
 	/**
@@ -276,9 +276,9 @@ public class QuerydslBindingsUnitTests {
 		PropertyPath path = bindings.getPropertyPath("city", ClassTypeInformation.from(User.class));
 
 		assertThat(path).isNotNull();
-		assertThat(bindings.isPathVisible("city", User.class)).isTrue();
+		assertThat(bindings.isPathAvailable("city", User.class)).isTrue();
 
-		assertThat(bindings.isPathVisible("address.city", User.class)).isTrue();
+		assertThat(bindings.isPathAvailable("address.city", User.class)).isTrue();
 
 		PropertyPath propertyPath = bindings.getPropertyPath("address.city", ClassTypeInformation.from(User.class));
 		assertThat(propertyPath).isNotNull();

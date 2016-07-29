@@ -15,8 +15,7 @@
  */
 package org.springframework.data.repository.support;
 
-import static org.hamcrest.Matchers.*;
-import static org.junit.Assert.*;
+import static org.assertj.core.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 import java.util.Arrays;
@@ -47,7 +46,7 @@ public class PageableExecutionUtilsUnitTests {
 	@Test
 	public void firstPageRequestIsLessThanOneFullPageDoesNotRequireTotal() {
 
-		Page<Integer> page = PageableExecutionUtils.getPage(Arrays.asList(1, 2, 3), new PageRequest(0, 10),
+		Page<Integer> page = PageableExecutionUtils.getPage(Arrays.asList(1, 2, 3), PageRequest.of(0, 10),
 				totalSupplierMock);
 
 		assertThat(page).contains(1, 2, 3);
@@ -92,7 +91,7 @@ public class PageableExecutionUtilsUnitTests {
 
 		doReturn(4L).when(totalSupplierMock).get();
 
-		Page<Integer> page = PageableExecutionUtils.getPage(Arrays.asList(1, 2, 3), new PageRequest(0, 3),
+		Page<Integer> page = PageableExecutionUtils.getPage(Arrays.asList(1, 2, 3), PageRequest.of(0, 3),
 				totalSupplierMock);
 
 		assertThat(page).contains(1, 2, 3);
@@ -109,7 +108,7 @@ public class PageableExecutionUtilsUnitTests {
 
 		doReturn(7L).when(totalSupplierMock).get();
 
-		Page<Integer> page = PageableExecutionUtils.getPage(Arrays.asList(1, 2, 3), new PageRequest(1, 3),
+		Page<Integer> page = PageableExecutionUtils.getPage(Arrays.asList(1, 2, 3), PageRequest.of(1, 3),
 				totalSupplierMock);
 
 		assertThat(page).contains(1, 2, 3);

@@ -75,8 +75,8 @@ public class TransactionRepositoryFactoryBeanSupportUnitTests {
 		SampleTransactionalRepositoryFactoryBean factoryBean = new SampleTransactionalRepositoryFactoryBean();
 		factoryBean.setBeanFactory(new DefaultListableBeanFactory());
 
-		assertThat(ReflectionTestUtils.getField(factoryBean, RepositoryFactoryBeanSupport.class, "beanFactory"),
-				is(notNullValue()));
+		assertThat(ReflectionTestUtils.getField(factoryBean, RepositoryFactoryBeanSupport.class, "beanFactory"))
+				.isNotNull();
 	}
 
 	@SuppressWarnings({ "unchecked", "rawtypes" })
