@@ -18,6 +18,7 @@
 	<properties>
 		<scala>2.11.7</scala>
 		<xmlbeam>1.4.8</xmlbeam>
+		<rxjava>1.1.9</rxjava>
 	</properties>
 
 	<dependencies>
@@ -110,6 +111,13 @@
 			<groupId>io.reactivex</groupId>
 			<artifactId>rxjava</artifactId>
 			<version>${rxjava}</version>
+			<optional>true</optional>
+		</dependency>
+
+		<dependency>
+			<groupId>io.reactivex.rxjava2</groupId>
+			<artifactId>rxjava</artifactId>
+			<version>${rxjava2}</version>
 			<optional>true</optional>
 		</dependency>
 
